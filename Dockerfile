@@ -1,6 +1,6 @@
 FROM ghcr.io/anomalyco/opencode:latest
 
-RUN apk update && apk add --no-cache git gh glab
+RUN apk update && apk add --no-cache git github-cli glab && rm -rf /var/cache/apk/*
 
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
