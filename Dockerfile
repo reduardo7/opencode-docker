@@ -9,4 +9,3 @@ ENV GIT_USER_NAME=""
 ENV GIT_USER_EMAIL=""
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["sh"]
