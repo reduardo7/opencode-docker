@@ -21,6 +21,18 @@ if [ -n "$GLAB_TOKEN" ]; then
     echo "$GLAB_TOKEN" | glab auth login --stdin
 fi
 
+if [ -n "$GIT_SSH_KEY" ]; then
+    mkdir -p ~/.ssh
+    echo "$GIT_SSH_KEY" > ~/.ssh/git_key
+    chmod 600 ~/.ssh/git_key
+    cat > ~/.ssh/config <<'SSHCFG'
+Host github.com gitlab.com bitbucket.org
+    IdentityFile ~/.ssh/git_key
+    StrictHostKeyChecking accept-new
+SSHCFG
+    chmod 600 ~/.ssh/config
+fi
+
 if [ -n "$GLAB_GIT_PROTOCOL" ]; then
     glab config set git_protocol "$GLAB_GIT_PROTOCOL"
 fi

@@ -7,5 +7,6 @@ RUN chmod +x /entrypoint.sh
 
 ENV GIT_USER_NAME=""
 ENV GIT_USER_EMAIL=""
+ENV GIT_SSH_KEY=""
 
 ENTRYPOINT ["/entrypoint.sh"]

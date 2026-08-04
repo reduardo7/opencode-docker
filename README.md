@@ -21,6 +21,7 @@ Includes:
 | `GH_GIT_PROTOCOL` | gh | Git protocol (`ssh` or `https`) |
 | `GLAB_TOKEN` | glab | GitLab authentication token |
 | `GLAB_GIT_PROTOCOL` | glab | Git protocol (`ssh` or `https`) |
+| `GIT_SSH_KEY` | git | Private SSH key for Git authentication |
 
 ## Usage
 
@@ -64,5 +65,15 @@ docker run -it --rm \
   -e GIT_USER_EMAIL="you@email.com" \
   -e GLAB_TOKEN="glpat-yourToken" \
   -e GLAB_GIT_PROTOCOL="ssh" \
+  ghcr.io/reduardo7/opencode:latest
+```
+
+### With SSH key (without gh or glab)
+
+```bash
+docker run -it --rm \
+  -e GIT_USER_NAME="Your Name" \
+  -e GIT_USER_EMAIL="you@email.com" \
+  -e GIT_SSH_KEY="$(cat ~/.ssh/id_ed25519)" \
   ghcr.io/reduardo7/opencode:latest
 ```
