@@ -1,0 +1,80 @@
+name: Build and Publish Docker Image
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  schedule:
+    - cron: '0 */6 * * *'
+  repository_dispatch:
+    types: [opencode-published]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: opencode
+  UPSTREAM_IMAGE: ghcr.io/anomalyco/opencode:latest
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Pull upstream base image
+        run: docker pull ${{ env.UPSTREAM_IMAGE }}
+
+      - name: Get upstream image digest
+        id: upstream
+        run: |
+          DIGEST=$(docker inspect --format='{{.RepoDigests}}' ${{ env.UPSTREAM_IMAGE }} | grep -o 'sha256:[^]]*')
+          echo "digest=$DIGEST" >> $GITHUB_OUTPUT
+
+      - name: Check for changes
+        id: check
+        uses: actions/cache/restore@v4
+        with:
+          path: /tmp
+          key: upstream-digest-${{ steps.upstream.outputs.digest }}
+          lookup-only: true
+
+      - name: Log in to GitHub Container Registry
+        if: ${{ steps.check.outputs.cache-hit != 'true' || github.event_name != 'schedule' }}
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker metadata
+        id: meta
+        if: ${{ steps.check.outputs.cache-hit != 'true' || github.event_name != 'schedule' }}
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+            type=sha,format=short
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || github.event_name == 'schedule' }}
+
+      - name: Build and push Docker image
+        if: ${{ steps.check.outputs.cache-hit != 'true' || github.event_name != 'schedule' }}
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Cache upstream digest
+        if: ${{ steps.check.outputs.cache-hit != 'true' && github.event_name == 'schedule' }}
+        uses: actions/cache/save@v4
+        with:
+          path: /tmp
+          key: upstream-digest-${{ steps.upstream.outputs.digest }}

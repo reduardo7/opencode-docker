@@ -2,7 +2,9 @@
 
 Docker image for [opencode](https://github.com/anomalyco/opencode) with dynamic configuration support for Git CLI tools.
 
-Built on top of the [official OpenCode image](https://github.com/anomalyco/opencode/pkgs/container/opencode). See the [OpenCode documentation](https://opencode.ai/docs/) for more details.
+Built on top of the [official OpenCode image](https://github.com/anomalyco/opencode/pkgs/container/opencode) and automatically rebuilt when a new upstream version is published.
+
+Pre-built image available at: [`ghcr.io/reduardo7/opencode`](https://github.com/reduardo7/opencode-docker/pkgs/container/opencode)
 
 Includes:
 - **git** — version control
@@ -22,7 +24,13 @@ Includes:
 
 ## Usage
 
-### Build the image
+### Pull the image
+
+```bash
+docker pull ghcr.io/reduardo7/opencode:latest
+```
+
+### Build locally (optional)
 
 ```bash
 docker build -t opencode-docker .
@@ -34,7 +42,7 @@ docker build -t opencode-docker .
 docker run -it --rm \
   -e GIT_USER_NAME="Your Name" \
   -e GIT_USER_EMAIL="you@email.com" \
-  opencode-docker
+  ghcr.io/reduardo7/opencode:latest
 ```
 
 ### With GitHub authentication
@@ -45,7 +53,7 @@ docker run -it --rm \
   -e GIT_USER_EMAIL="you@email.com" \
   -e GH_TOKEN="ghp_yourToken" \
   -e GH_GIT_PROTOCOL="ssh" \
-  opencode-docker
+  ghcr.io/reduardo7/opencode:latest
 ```
 
 ### With GitLab authentication
@@ -56,5 +64,5 @@ docker run -it --rm \
   -e GIT_USER_EMAIL="you@email.com" \
   -e GLAB_TOKEN="glpat-yourToken" \
   -e GLAB_GIT_PROTOCOL="ssh" \
-  opencode-docker
+  ghcr.io/reduardo7/opencode:latest
 ```
