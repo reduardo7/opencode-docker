@@ -22,6 +22,7 @@ Includes:
 | `GLAB_TOKEN` | glab | GitLab authentication token |
 | `GLAB_GIT_PROTOCOL` | glab | Git protocol (`ssh` or `https`) |
 | `GIT_SSH_KEY` | git | Private SSH key for Git authentication |
+| `ENTRYPOINT_CMD` | — | Command to execute instead of `opencode` (default: `opencode`) |
 
 ## Usage
 
