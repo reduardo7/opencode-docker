@@ -37,4 +37,4 @@ if [ -n "$GLAB_GIT_PROTOCOL" ]; then
     glab config set git_protocol "$GLAB_GIT_PROTOCOL"
 fi
 
-exec "${ENTRYPOINT_CMD:-opencode}" "$@"
+"${ENTRYPOINT_CMD:-opencode}" "$@"
