@@ -23,6 +23,7 @@ Includes:
 | `GLAB_GIT_PROTOCOL` | glab | Git protocol (`ssh` or `https`) |
 | `GIT_SSH_KEY` | git | Private SSH key for Git authentication |
 | `ENTRYPOINT_CMD` | — | Command to execute instead of `opencode` (default: `opencode`) |
+| `EXEC_TIMEOUT` | — | Timeout in seconds for the executed command (optional, no timeout if unset) |
 
 ## Usage
 

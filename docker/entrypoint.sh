@@ -37,4 +37,15 @@ if [ -n "$GLAB_GIT_PROTOCOL" ]; then
     glab config set git_protocol "$GLAB_GIT_PROTOCOL"
 fi
 
-"${ENTRYPOINT_CMD:-opencode}" "$@"
+CMD="${ENTRYPOINT_CMD:-opencode}"
+
+if [ -n "$EXEC_TIMEOUT" ]; then
+    if echo "$EXEC_TIMEOUT" | grep -qE '^[0-9]+$'; then
+        timeout "$EXEC_TIMEOUT" "$CMD" "$@"
+    else
+        echo "WARNING: EXEC_TIMEOUT='$EXEC_TIMEOUT' is not a valid integer. Ignoring timeout." >&2
+        "$CMD" "$@"
+    fi
+else
+    "$CMD" "$@"
+fi
