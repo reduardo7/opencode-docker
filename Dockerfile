@@ -20,4 +20,7 @@ ENV GIT_USER_NAME=""
 ENV GIT_USER_EMAIL=""
 ENV GIT_SSH_KEY=""
 
+RUN mkdir /workspace
+WORKDIR /workspace
+
 ENTRYPOINT ["/entrypoint.sh"]
