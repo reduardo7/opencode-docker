@@ -7,6 +7,7 @@ Built on top of the [official OpenCode image](https://github.com/anomalyco/openc
 Pre-built image available at: [`ghcr.io/reduardo7/opencode`](https://github.com/reduardo7/opencode-docker/pkgs/container/opencode)
 
 Includes:
+- **python3** and **pip** — Python runtime
 - **git** — version control
 - **gh** — GitHub CLI
 - **glab** — GitLab CLI
