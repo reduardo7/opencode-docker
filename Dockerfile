@@ -1,7 +1,7 @@
 FROM ghcr.io/anomalyco/opencode:latest
 
 RUN apk update \
-  && apk add --no-cache git github-cli glab openssh-client \
+  && apk add --no-cache git github-cli glab openssh-client python3 py3-pip \
   && rm -rf /var/cache/apk/*
 
 RUN mkdir -p ~/.ssh \
