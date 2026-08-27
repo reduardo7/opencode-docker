@@ -3,7 +3,6 @@ name: Build and Publish Docker Image
 on:
   push:
     branches: [node]
-    tags: ['v*']
   schedule:
     - cron: '0 */6 * * *'
   repository_dispatch:
@@ -26,6 +25,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: node
 
       - name: Pull upstream base image
         run: docker pull ${{ env.UPSTREAM_IMAGE }}
@@ -69,10 +70,7 @@ jobs:
             ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
             ${{ env.DOCKERHUB_REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=ref,event=branch
-            type=ref,event=tag
-            type=sha,format=short
-            type=raw,value=node,enable=${{ github.ref == 'refs/heads/node' }}
+            type=raw,value=node
 
       - name: Build and push Docker image
         if: ${{ steps.check.outputs.cache-hit != 'true' || github.event_name != 'schedule' }}
