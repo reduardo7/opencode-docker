@@ -10,6 +10,8 @@ Includes:
 - **git** — version control
 - **gh** — GitHub CLI
 - **glab** — GitLab CLI
+- **bun** — JavaScript runtime and package manager
+- **nvm** — Node Version Manager
 
 ## Environment variables
 
@@ -30,7 +32,7 @@ Includes:
 ### Pull the image
 
 ```bash
-docker pull ghcr.io/reduardo7/opencode:latest
+docker pull ghcr.io/reduardo7/opencode:node
 ```
 
 ### Build locally (optional)
@@ -45,7 +47,7 @@ docker build -t opencode-docker .
 docker run -it --rm \
   -e GIT_USER_NAME="Your Name" \
   -e GIT_USER_EMAIL="you@email.com" \
-  ghcr.io/reduardo7/opencode:latest
+  ghcr.io/reduardo7/opencode:node
 ```
 
 ### With GitHub authentication
@@ -56,7 +58,7 @@ docker run -it --rm \
   -e GIT_USER_EMAIL="you@email.com" \
   -e GH_TOKEN="ghp_yourToken" \
   -e GH_GIT_PROTOCOL="ssh" \
-  ghcr.io/reduardo7/opencode:latest
+  ghcr.io/reduardo7/opencode:node
 ```
 
 ### With GitLab authentication
@@ -67,7 +69,7 @@ docker run -it --rm \
   -e GIT_USER_EMAIL="you@email.com" \
   -e GLAB_TOKEN="glpat-yourToken" \
   -e GLAB_GIT_PROTOCOL="ssh" \
-  ghcr.io/reduardo7/opencode:latest
+  ghcr.io/reduardo7/opencode:node
 ```
 
 ### With SSH key (without gh or glab)
@@ -77,7 +79,7 @@ docker run -it --rm \
   -e GIT_USER_NAME="Your Name" \
   -e GIT_USER_EMAIL="you@email.com" \
   -e GIT_SSH_KEY="$(cat ~/.ssh/id_ed25519)" \
-  ghcr.io/reduardo7/opencode:latest
+  ghcr.io/reduardo7/opencode:node
 ```
 
 ### GitHub Action workflow
@@ -115,7 +117,7 @@ jobs:
             -e GIT_SSH_KEY="${{ secrets.GIT_SSH_KEY }}" \
             -e LITELLM_API_KEY="${{ secrets.LITELLM_API_KEY }}" \
             -e EXEC_TIMEOUT=800 \
-            ghcr.io/reduardo7/opencode:latest \
+            ghcr.io/reduardo7/opencode:node \
             run --auto "/process-to-run"
 
       - name: Push changes

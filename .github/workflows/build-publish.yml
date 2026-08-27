@@ -2,7 +2,7 @@ name: Build and Publish Docker Image
 
 on:
   push:
-    branches: [main]
+    branches: [node]
     tags: ['v*']
   schedule:
     - cron: '0 */6 * * *'
@@ -72,7 +72,7 @@ jobs:
             type=ref,event=branch
             type=ref,event=tag
             type=sha,format=short
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || github.event_name == 'schedule' }}
+            type=raw,value=node,enable=${{ github.ref == 'refs/heads/node' }}
 
       - name: Build and push Docker image
         if: ${{ steps.check.outputs.cache-hit != 'true' || github.event_name != 'schedule' }}
