@@ -18,7 +18,7 @@ Includes:
 |---|---|---|
 | `GIT_USER_NAME` | git | Commit user name |
 | `GIT_USER_EMAIL` | git | Commit email |
-| `GH_TOKEN` | gh | GitHub authentication token |
+| `GH_TOKEN_AUTH` | gh | GitHub authentication token |
 | `GH_GIT_PROTOCOL` | gh | Git protocol (`ssh` or `https`) |
 | `GLAB_TOKEN` | glab | GitLab authentication token |
 | `GLAB_GIT_PROTOCOL` | glab | Git protocol (`ssh` or `https`) |
@@ -55,7 +55,7 @@ docker run -it --rm \
 docker run -it --rm \
   -e GIT_USER_NAME="Your Name" \
   -e GIT_USER_EMAIL="you@email.com" \
-  -e GH_TOKEN="ghp_yourToken" \
+  -e GH_TOKEN_AUTH="ghp_yourToken" \
   -e GH_GIT_PROTOCOL="ssh" \
   ghcr.io/reduardo7/opencode:python
 ```

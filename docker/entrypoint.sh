@@ -9,8 +9,9 @@ if [ -n "$GIT_USER_EMAIL" ]; then
     git config --global user.email "$GIT_USER_EMAIL"
 fi
 
-if [ -n "$GH_TOKEN" ]; then
-    echo "$GH_TOKEN" | gh auth login --with-token
+if [ -n "$GH_TOKEN_AUTH" ]; then
+    echo "$GH_TOKEN_AUTH" | gh auth login --with-token
+    gh auth setup-git
 fi
 
 if [ -n "$GH_GIT_PROTOCOL" ]; then
