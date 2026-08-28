@@ -1,8 +1,38 @@
+---
+description: Add an automatic Docker image build for a variant branch (single-variant workflow on the branch + matrix entry on main). Usage: /add-image-build <branch>
+---
+
+Add an automatic Docker image build for a variant branch, exactly like the existing `python` and `node` branches. The branch name comes from `$1`.
+
+Rules:
+- Only commit locally. Never run `git push`.
+- Commit on each branch that is modified (the variant branch and `main`).
+- Do not modify the `Dockerfile` or any other file; only `.github/workflows/build-publish.yml`.
+
+Steps:
+
+1. Let `BRANCH` = `$1`. If it is empty, ask the user for the branch name and stop.
+
+2. Record the current branch as `ORIGINAL_BRANCH` (`git rev-parse --abbrev-ref HEAD`).
+
+3. `git checkout BRANCH`.
+
+4. Rewrite `.github/workflows/build-publish.yml` on this branch so it builds ONLY this branch. Match the `python`/`node` shape exactly:
+   - `on.push.branches: [BRANCH]` (remove any `tags: ['v*']`).
+   - No `strategy.matrix` block (remove it if present).
+   - Checkout step gets `with: { ref: BRANCH }`.
+   - Docker metadata `tags:` becomes `type=raw,value=BRANCH` (drop `type=ref`, `type=sha`, and any `latest`/`main` logic).
+   - Both `key:` cache lines use `upstream-digest-${{ steps.upstream.outputs.digest }}` (no `matrix.tag`).
+   - Keep the `schedule`, `repository_dispatch`, and `workflow_dispatch` triggers as-is.
+
+   Final file must look like this (replace `BRANCH`):
+
+```yaml
 name: Build and Publish Docker Image
 
 on:
   push:
-    branches: [node-24]
+    branches: [BRANCH]
   schedule:
     - cron: '0 */6 * * *'
   repository_dispatch:
@@ -26,7 +56,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: node-24
+          ref: BRANCH
 
       - name: Pull upstream base image
         run: docker pull ${{ env.UPSTREAM_IMAGE }}
@@ -70,7 +100,7 @@ jobs:
             ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
             ${{ env.DOCKERHUB_REGISTRY }}/${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=node-24
+            type=raw,value=BRANCH
 
       - name: Build and push Docker image
         if: ${{ steps.check.outputs.cache-hit != 'true' || github.event_name != 'schedule' }}
@@ -87,3 +117,21 @@ jobs:
         with:
           path: /tmp
           key: upstream-digest-${{ steps.upstream.outputs.digest }}
+```
+
+5. `git add .github/workflows/build-publish.yml && git commit -m "ci: build BRANCH variant and publish BRANCH tag only"`.
+
+6. `git checkout main`.
+
+7. In main's `.github/workflows/build-publish.yml`, append a new entry to the `strategy.matrix.include` list (after the existing entries):
+
+```yaml
+          - ref: BRANCH
+            tag: BRANCH
+```
+
+8. `git add .github/workflows/build-publish.yml && git commit -m "ci: add BRANCH variant to build matrix"`.
+
+9. `git checkout ORIGINAL_BRANCH`.
+
+Report which branches were committed (BRANCH and main) and their commit hashes. Remind the user that nothing was pushed.

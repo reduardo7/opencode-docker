@@ -5,6 +5,11 @@ FROM ghcr.io/anomalyco/opencode:latest
 RUN apk update \
   && apk add --no-cache git github-cli glab openssh-client bash curl pax-utils build-base linux-headers
 
+RUN curl -fsSL https://unofficial-builds.nodejs.org/download/release/v24.13.0/node-v24.13.0-linux-x64-musl.tar.gz \
+    | tar -xz -C /usr/local --strip-components=1 \
+  && node --version \
+  && npm --version
+
 COPY --from=python /usr/local /usr/local
 
 RUN find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec scanelf --needed --nobanner --format '%n#p' '{}' ';' \
