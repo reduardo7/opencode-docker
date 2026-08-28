@@ -31,6 +31,8 @@ jobs:
             tag: python
           - ref: node
             tag: node
+          - ref: node-24
+            tag: node-24
 
     steps:
       - name: Checkout repository
