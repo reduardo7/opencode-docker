@@ -12,6 +12,7 @@ Includes:
 - **glab** — GitLab CLI
 - **bun** — JavaScript runtime and package manager
 - **nvm** — Node Version Manager
+- **python** — Python 3.10 with pip
 
 ## Environment variables
 

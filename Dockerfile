@@ -1,15 +1,19 @@
+FROM python:3.10-alpine AS python
+
 FROM ghcr.io/anomalyco/opencode:latest
 
 RUN apk update \
-  && apk add --no-cache git github-cli glab openssh-client bash curl \
+  && apk add --no-cache git github-cli glab openssh-client bash curl libffi openssl zlib sqlite-libs ncurses-libs readline \
   && rm -rf /var/cache/apk/*
 
-RUN curl -fsSL https://bun.sh/install | bash \
-  && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+COPY --from=python /usr/local /usr/local
 
-ENV BUN_INSTALL="/root/.bun" \
-    PATH="/root/.bun/bin:/root/.nvm:$PATH" \
-    NVM_DIR="/root/.nvm"
+RUN curl -fsSL https://bun.sh/install | bash
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+
+ENV BUN_INSTALL="/root/.bun"
+ENV PATH="/root/.bun/bin:/root/.nvm:$PATH"
+ENV NVM_DIR="/root/.nvm"
 
 RUN mkdir -p ~/.ssh \
   && ssh-keyscan github.com gitlab.com bitbucket.org >> ~/.ssh/known_hosts \
