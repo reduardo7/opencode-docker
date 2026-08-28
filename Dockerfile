@@ -3,11 +3,11 @@ FROM python:3.10-alpine AS python
 FROM ghcr.io/anomalyco/opencode:latest
 
 RUN apk update \
-  && apk add --no-cache git github-cli glab openssh-client bash curl pax-utils
+  && apk add --no-cache git github-cli glab openssh-client bash curl pax-utils build-base linux-headers
 
 COPY --from=python /usr/local /usr/local
 
-RUN find /usr/local -type f -executable -not \( -name '*tkinter*' \)     -exec scanelf --needed --nobanner --format '%n#p' '{}' ';' \
+RUN find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec scanelf --needed --nobanner --format '%n#p' '{}' ';' \
     | tr ',' '\n' \
     | sort -u \
     | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
