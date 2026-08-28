@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+git config --global --add safe.directory /workspace
+
 if [ -n "$GIT_USER_NAME" ]; then
     git config --global user.name "$GIT_USER_NAME"
 fi
