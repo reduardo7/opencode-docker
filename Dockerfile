@@ -3,10 +3,16 @@ FROM python:3.10-alpine AS python
 FROM ghcr.io/anomalyco/opencode:latest
 
 RUN apk update \
-  && apk add --no-cache git github-cli glab openssh-client bash curl libffi openssl zlib sqlite-libs ncurses-libs readline \
-  && rm -rf /var/cache/apk/*
+  && apk add --no-cache git github-cli glab openssh-client bash curl pax-utils
 
 COPY --from=python /usr/local /usr/local
+
+RUN find /usr/local -type f -executable -not \( -name '*tkinter*' \)     -exec scanelf --needed --nobanner --format '%n#p' '{}' ';' \
+    | tr ',' '\n' \
+    | sort -u \
+    | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
+    | xargs -r apk add --no-cache \
+  && rm -rf /var/cache/apk/*
 
 RUN curl -fsSL https://bun.sh/install | bash
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
