@@ -33,10 +33,54 @@ Includes:
 docker pull ghcr.io/reduardo7/opencode:latest
 ```
 
+Available tags: `latest`, `python`, `node`, `node-24`.
+
+If the package is private, log in first:
+
+```bash
+echo "$GITHUB_TOKEN" | docker login ghcr.io -u <your-username> --password-stdin
+```
+
+### ARM64 (Apple Silicon, Raspberry Pi, AWS Graviton)
+
+The published image is built for `linux/amd64` only. On an ARM64 host the plain
+`docker pull` fails with `no matching manifest for linux/arm64`. Two options:
+
+**1. Build natively on the ARM host** (recommended — the upstream base image is
+multi-arch, so the result is a native `linux/arm64` image with no emulation):
+
+```bash
+git clone https://github.com/reduardo7/opencode-docker.git
+cd opencode-docker
+docker build -t opencode-docker .
+docker run -it --rm opencode-docker
+```
+
+**2. Run the amd64 image under emulation** (no build, but slower):
+
+```bash
+docker pull --platform linux/amd64 ghcr.io/reduardo7/opencode:latest
+docker run -it --rm --platform linux/amd64 ghcr.io/reduardo7/opencode:latest
+```
+
+Docker Desktop already ships the emulation layer. On Linux ARM install it first:
+
+```bash
+docker run --privileged --rm tonistiigi/binfmt --install amd64
+```
+
 ### Build locally (optional)
 
 ```bash
 docker build -t opencode-docker .
+```
+
+Each variant branch carries its own `Dockerfile`; check the branch out before
+building to get `python`, `node` or `node-24` packages:
+
+```bash
+git checkout node-24
+docker build -t opencode-docker:node-24 .
 ```
 
 ### Basic example
